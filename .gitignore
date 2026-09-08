@@ -1,0 +1,22 @@
+# Local datasets, checkpoints, generated samples, logs and caches.
+all_datasets/
+/data/
+/datasets/
+/cifar-10-batches-py/
+/cifar-10-python.tar.gz
+runs/
+outputs/
+samples/
+*.pt
+*.pth
+*.ckpt
+*.log
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.codex-runs/
+
+# Keep the repository focused on source and reproducibility metadata.
+!results/*.json
+!configs/*.json

@@ -1,0 +1,38 @@
+{
+  "experiment": "cifar10-generation-only-lowfreq-ot-ce-5k",
+  "checkpoint_step": 1000000,
+  "checkpoint": "runs/cifar10-generation-only-lowfreq-ot-ce-5k/model-1000000.pt",
+  "dataset": "CIFAR-10",
+  "generation": {
+    "accuracy": 0.8265625238418579,
+    "generated_images": 2560,
+    "images_per_class": 256,
+    "ode_steps": 30,
+    "method": "heun"
+  },
+  "reverse_ode_classification": {
+    "accuracy": 0.9023000001907349,
+    "test_images": 10000,
+    "ode_steps": 30,
+    "method": "heun"
+  },
+  "quality": {
+    "fid_inception": 53.25769034210202,
+    "kid_mean": 0.05192796953203202,
+    "kid_std": 0.0017903924272466504,
+    "inception_score_mean": 6.565446817594308,
+    "inception_score_std": 0.2656262160043692,
+    "generated_images": 2560,
+    "real_test_images": 5000
+  },
+  "training": {
+    "center_mode": "low_frequency",
+    "center_scale": 12.0,
+    "latent_sigma": 0.5,
+    "pairing": "sinkhorn",
+    "ot_epsilon": 0.005,
+    "ot_iterations": 10,
+    "reverse_ode_ce_weight": 0.001,
+    "seed": 0
+  }
+}
