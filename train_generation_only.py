@@ -140,8 +140,10 @@ def make_config(args: argparse.Namespace):
         "channel_mults": [int(item) for item in args.channel_mults.split(",")],
         "use_history": False,
         "direction_adapter": args.direction_adapter,
+        "direction_training": "teacher" if args.direction_adapter else "none",
         "direction_dropout": args.direction_dropout if args.direction_adapter else 0.0,
         "direction_noise": args.direction_noise if args.direction_adapter else 0.0,
+        "adapter_only": args.adapter_only,
         "condition_on_alpha": True,
         "random_crop": not args.no_random_crop,
         "data_noise": args.data_noise,
@@ -254,8 +256,32 @@ def main() -> None:
         source_direction_adapter = bool(source_config.get("direction_adapter", False))
         if source_direction_adapter and not args.direction_adapter:
             raise ValueError("cannot initialize a Markov model from a direction-adapter checkpoint")
-        model.load_state_dict(initialization["model"], strict=False)
-        ema.model.load_state_dict(initialization["ema"]["model"], strict=False)
+        # Adapter-only fine-tuning must preserve the exact EMA model used by
+        # the baseline evaluator.  Otherwise EMA warmup would replace that
+        # frozen trunk with the raw training weights on the first update.
+        source_state = (
+            initialization["ema"]["model"]
+            if args.adapter_only
+            else initialization["model"]
+        )
+        missing, unexpected = model.load_state_dict(source_state, strict=False)
+        allowed_missing = {
+            name for name in model.state_dict()
+            if name.startswith("direction_adapter_net.")
+        }
+        if set(missing) != allowed_missing or unexpected:
+            raise ValueError(
+                f"unexpected initialization keys: missing={missing}, "
+                f"unexpected={unexpected}"
+            )
+        ema_missing, ema_unexpected = ema.model.load_state_dict(
+            initialization["ema"]["model"], strict=False
+        )
+        if set(ema_missing) != allowed_missing or ema_unexpected:
+            raise ValueError(
+                f"unexpected EMA initialization keys: missing={ema_missing}, "
+                f"unexpected={ema_unexpected}"
+            )
         latent.load_state_dict(initialization["latent"])
         if objective_latent is not latent:
             objective_latent.load_state_dict(initialization["latent"])
@@ -276,8 +302,10 @@ def main() -> None:
         saved_config.setdefault("ot_iterations", 50)
         saved_config.setdefault("path_diagnostics_every", 1000)
         saved_config.setdefault("direction_adapter", False)
+        saved_config.setdefault("direction_training", "none")
         saved_config.setdefault("direction_dropout", 0.0)
         saved_config.setdefault("direction_noise", 0.0)
+        saved_config.setdefault("adapter_only", False)
         if saved_config != config:
             raise ValueError("resume checkpoint config does not match")
         model.load_state_dict(checkpoint["model"])

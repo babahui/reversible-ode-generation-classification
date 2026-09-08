@@ -36,6 +36,26 @@ class ConstantMarginals(nn.Module):
         )
 
 
+class PreviousDirectionVelocity(nn.Module):
+    """Return unit velocity first, then reuse the accepted physical velocity."""
+
+    output_marginals = False
+    direction_adapter = True
+
+    def __init__(self):
+        super().__init__()
+        self.directions = []
+
+    def forward(self, x, alpha, previous=None, recent_velocity=None):
+        self.directions.append(recent_velocity.detach().clone())
+        is_initial = recent_velocity.flatten(1).abs().sum(1) == 0
+        return torch.where(
+            is_initial[:, None, None, None],
+            torch.ones_like(x),
+            recent_velocity,
+        )
+
+
 class CoreTests(unittest.TestCase):
     def test_generation_only_objective_and_sampler(self):
         model = MarginalUNet(
@@ -49,6 +69,38 @@ class CoreTests(unittest.TestCase):
         self.assertTrue(torch.isfinite(loss))
         generated = GenerationOnlySampler(model).integrate(noise, steps=2)
         self.assertEqual(generated.shape, images.shape)
+
+    def test_direction_adapter_is_initially_an_exact_noop(self):
+        baseline = MarginalUNet(
+            1, 2, 8, (1, 2), False, True, output_marginals=False
+        ).eval()
+        adapted = MarginalUNet(
+            1, 2, 8, (1, 2), False, True, output_marginals=False,
+            direction_adapter=True,
+        ).eval()
+        missing, unexpected = adapted.load_state_dict(
+            baseline.state_dict(), strict=False
+        )
+        self.assertFalse(unexpected)
+        self.assertTrue(all(name.startswith("direction_adapter_net.") for name in missing))
+        x = torch.randn(3, 1, 8, 8)
+        direction = torch.randn_like(x)
+        alpha = torch.rand(3, 2).softmax(1)
+        with torch.no_grad():
+            expected = baseline(x, alpha)
+            actual = adapted(x, alpha, recent_velocity=direction)
+        self.assertTrue(torch.equal(expected, actual))
+
+    def test_direction_sampler_reuses_physical_velocity_in_both_directions(self):
+        initial = torch.zeros(2, 1, 4, 4)
+        for start, end, expected in ((0.0, 1.0, 1.0), (1.0, 0.0, -1.0)):
+            model = PreviousDirectionVelocity()
+            result = GenerationOnlySampler(model).integrate_interval(
+                initial, start, end, steps=2, method="euler"
+            )
+            self.assertTrue(torch.equal(model.directions[0], torch.zeros_like(initial)))
+            self.assertTrue(torch.equal(model.directions[1], torch.ones_like(initial)))
+            self.assertTrue(torch.allclose(result, torch.full_like(result, expected)))
 
     def test_latent_centers_are_orthogonal_and_classifiable(self):
         latent = OrthogonalGaussianLatent(5, (1, 4, 4), center_scale=3.0, sigma=0.1)
