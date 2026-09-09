@@ -31,6 +31,7 @@ The main result is documented in [results/README.md](results/README.md). The
 checkpoint handoff and checksum procedure are in [WEIGHTS.md](WEIGHTS.md).
 Dataset download, verification, directory layout, and offline setup are in
 [DATASET.md](DATASET.md).
+完整的中文环境、续训、推理和指标比较流程见 [USAGE_CN.md](USAGE_CN.md)。
 Do not commit `runs/`, datasets, or `.pt` files; `.gitignore` is configured for
 that purpose. The local 1M checkpoint is at
 `runs/cifar10-generation-only-lowfreq-ot-ce-5k/model-1000000.pt`.
