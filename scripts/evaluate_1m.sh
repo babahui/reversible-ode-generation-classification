@@ -8,6 +8,7 @@ CLASSIFIER="${CLASSIFIER:-$ROOT/runs/reference-cifar10-classifier/cifar10-classi
 OUTPUT="${OUTPUT:-$ROOT/runs/cifar10-generation-only-lowfreq-ot-ce-1m-evaluation}"
 DEVICE="${DEVICE:-auto}"
 [[ -f "$CHECKPOINT" ]] || { echo "missing CHECKPOINT=$CHECKPOINT" >&2; exit 2; }
+[[ -f "$CLASSIFIER" ]] || { echo "missing CLASSIFIER=$CLASSIFIER" >&2; exit 2; }
 mkdir -p "$OUTPUT"
 cd "$ROOT"
 

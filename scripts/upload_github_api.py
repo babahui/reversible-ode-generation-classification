@@ -5,6 +5,7 @@ import argparse
 import base64
 import getpass
 import json
+import os
 import subprocess
 import urllib.error
 import urllib.request
@@ -90,7 +91,7 @@ def main() -> None:
         raise RuntimeError("Refusing to upload a dirty working tree; commit changes first")
     if dirty:
         print("Local uncommitted changes are present; uploading committed HEAD only.", flush=True)
-    token = getpass.getpass("GitHub token: ")
+    token = os.environ.get("GITHUB_TOKEN", "").strip() or getpass.getpass("GitHub token: ")
     if not token:
         raise RuntimeError("GitHub token is required")
     api = GitHubAPI(token, args.repository)

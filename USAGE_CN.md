@@ -1,4 +1,4 @@
-# 使用说明：从 1M 继续训练并评估
+# 使用说明：从 1M 继续训练到 10M、推理与指标复现
 
 本文档对应仓库中的 CIFAR-10 实验：低频 Gaussian 类条件噪声、类内 Sinkhorn OT 配对、
 conditional flow matching，以及 reverse-ODE Gaussian posterior CE 辅助损失。
@@ -19,7 +19,9 @@ conditional flow matching，以及 reverse-ODE Gaussian posterior CE 辅助损�
 | 1M 配置 | `configs/cifar10_lowfreq_ot_ce_1m.json` |
 | 一键训练 | `scripts/train_1m.sh` |
 | 从 1M 续训 | `scripts/continue_from_1m.sh` |
+| 1M 分阶段训练到 10M | `scripts/train_to_10m.sh` |
 | 一键评估 | `scripts/evaluate_1m.sh` |
+| 1M 到 10M 里程碑评估 | `scripts/evaluate_milestones.sh` |
 
 ## 2. 环境设置
 
@@ -71,6 +73,9 @@ GitHub 不存放 133 MB 的 checkpoint。将网盘中的主权重下载到任意
 weights/model-1000000.pt
 ```
 
+当前 1M 权重下载地址：<https://pan.quark.cn/s/67b5254c9276>（夸克网盘文件名
+`model-1000000.pt`）。下载后请按下方 SHA256 校验；不要把权重提交到 GitHub。
+
 主权重的 SHA256 应为：
 
 ```text
@@ -89,12 +94,28 @@ weights/cifar10-classifier-best.pt
 
 两个文件的来源和校验值见 [WEIGHTS.md](WEIGHTS.md)。
 
-## 5. 从头训练到 1M
+## 5. 单卡 batch size 与从头训练到 1M
+
+当前实验在约 32 GB 显存的 RTX 4080 SUPER 上验证了 `batch size=256`，因此脚本默认值为
+256。显存更小的卡请先用 128、64 或 32；显存更大的卡可以逐步试探。推荐先运行 2 步探测，
+把仍能完成且没有 CUDA out-of-memory 的最大值设为 `BATCH_SIZE`：
+
+```bash
+for bs in 512 384 256 192 128 64 32; do
+  echo "testing batch size $bs"
+  BATCH_SIZE=$bs DATA_ROOT=/path/to/all_datasets OUTPUT="runs/batch-probe-$bs" \
+    DEVICE=cuda TARGET_STEPS=2 CHECKPOINT=/path/to/model-1000000.pt \
+    ./scripts/continue_from_1m.sh && break
+done
+```
+
+探测时如果某个值 OOM，降低到下一个值；正式训练时固定该值，不要在不同里程碑之间改变。
+`BATCH_SIZE`、`WORKERS`、`SAVE_EVERY` 均可通过环境变量覆盖。
 
 ```bash
 DATA_ROOT=/path/to/all_datasets \
 OUTPUT=runs/cifar10-generation-only-lowfreq-ot-ce-5k \
-DEVICE=cuda \
+DEVICE=cuda BATCH_SIZE=256 \
 ./scripts/train_1m.sh
 ```
 
@@ -131,7 +152,26 @@ DATA_ROOT=/path/to/all_datasets DEVICE=cuda ./scripts/continue_from_1m.sh
 
 续训不会重置模型、EMA、latent 几何或 optimizer；`--resume` 会恢复 checkpoint 中的训练状态。
 
-## 7. 生成推理
+## 7. 持续训练到 10M，每 1M 保存一次
+
+仓库提供阶段化运行器。它从 1M 开始依次训练到 2M、3M，直到 10M，每一阶段使用独立目录，
+因此中断后可从最近的 `model-latest.pt` 继续：
+
+```bash
+DATA_ROOT=/path/to/all_datasets \
+CHECKPOINT=/path/to/model-1000000.pt \
+OUTPUT=runs/cifar10-generation-only-lowfreq-ot-ce-10m \
+START_STEPS=1000000 END_STEPS=10000000 STAGE_STEPS=1000000 \
+BATCH_SIZE=256 DEVICE=cuda \
+./scripts/train_to_10m.sh
+```
+
+每个阶段的权重和日志位于 `OUTPUT/step-2000000/`、`OUTPUT/step-3000000/` 等目录。若任务中断，
+可将最近阶段的 `model-latest.pt` 作为 `CHECKPOINT`，把 `START_STEPS` 改为该 checkpoint 的步数，
+再运行同一脚本。训练脚本不会自动计算昂贵的 FID/KID/IS；每到一个整百万步，应等待该阶段完成，
+然后用下一节的固定参数评估并保存 JSON。
+
+## 8. 生成推理
 
 生成 10 个类别、每类 16 张图片：
 
@@ -144,7 +184,7 @@ python sample_generation_only.py \
 
 输出网格按类别排列，像素已转换到 `[0, 1]` PNG。
 
-## 8. 查看指标
+## 9. 查看指标
 
 ### 8.1 生成类别准确率和重建
 
@@ -211,9 +251,35 @@ python evaluate_generation_only.py \
   --steps 30 --method heun --device cuda
 ```
 
-## 9. 如何判断是否提升
+## 10. 每 1M 汇报和判断是否提升
 
-对 1M、1.2M、1.5M 分别运行同样的评估参数，比较：
+训练完成后，可以自动对 `1M, 2M, ..., 10M` 每个 checkpoint 运行全部评估：
+
+```bash
+DATA_ROOT=/path/to/all_datasets \
+CHECKPOINT_DIR=runs/cifar10-generation-only-lowfreq-ot-ce-10m \
+INITIAL_CHECKPOINT=/path/to/model-1000000.pt \
+CLASSIFIER=/path/to/cifar10-classifier-best.pt \
+OUTPUT=runs/cifar10-generation-only-lowfreq-ot-ce-10m/evaluation \
+DEVICE=cuda ./scripts/evaluate_milestones.sh
+```
+
+该命令会为每个 checkpoint 建立同名目录，例如：
+`evaluation/step-2000000-generation`、`evaluation/step-2000000-reverse`、
+`evaluation/step-2000000-quality`。每个里程碑都运行 9.1、9.2、9.3 三条命令，记录：
+
+```text
+step, generated_accuracy, reverse_ode_accuracy_30_heun,
+fid_inception, kid_mean, kid_std, inception_score_mean, inception_score_std,
+generated_pair_ssim, nearest_train_ssim
+```
+
+可将这些 JSON 汇总为 CSV 或表格后画出随训练步数变化的曲线。只有在数据集、样本数量、随机种子、
+ODE 步数/solver、batch size 和 reference classifier 都一致时，才把指标变化解释为训练继续带来的
+变化；FID/KID 越低通常越好，生成准确率、反向 ODE 准确率和 IS 通常越高越好，SSIM 主要用于监测
+多样性和记忆风险。
+
+对 1M、2M、...、10M 分别运行同样的评估参数，比较：
 
 1. `generated_accuracy`：条件生成类别是否更准确。
 2. 反向 ODE `accuracy[-1]`：图像到 Gaussian 的分类是否更准确。
