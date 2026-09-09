@@ -104,11 +104,13 @@ weights/cifar10-classifier-best.pt
 for bs in 512 384 256 192 128 64 32; do
   echo "testing batch size $bs"
   BATCH_SIZE=$bs DATA_ROOT=/path/to/all_datasets OUTPUT="runs/batch-probe-$bs" \
-    DEVICE=cuda TARGET_STEPS=2 CHECKPOINT=/path/to/model-1000000.pt \
+    DEVICE=cuda TARGET_STEPS=1000002 CHECKPOINT=/path/to/model-1000000.pt \
     ./scripts/continue_from_1m.sh && break
 done
 ```
 
+这里的 `1000002` 是 1M checkpoint 的步数加 2；如果探测其他步数的 checkpoint，请相应改成
+“checkpoint 步数 + 2”。
 探测时如果某个值 OOM，降低到下一个值；正式训练时固定该值，不要在不同里程碑之间改变。
 `BATCH_SIZE`、`WORKERS`、`SAVE_EVERY` 均可通过环境变量覆盖。
 
