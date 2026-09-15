@@ -1,0 +1,20 @@
+{
+  "checkpoint": "model-300000.pt",
+  "output": "gaussian_ce-300000-50k",
+  "data_root": "all_datasets",
+  "cache": "reference-cache",
+  "samples": 50000,
+  "batch_size": 64,
+  "method": "heun",
+  "steps": 60,
+  "tol": 1e-05,
+  "seed": 20260912,
+  "cross_check": false,
+  "reverse_images": 10000,
+  "classifier": "cifar10-classifier-best.pt",
+  "checkpoint_sha256": "7856b46a370386dc4496a9377a63d62f86a695c997e82ad8da05bc225e3e69ce",
+  "quantization": "(x*127.5+128).clamp(0,255).uint8",
+  "reference": "all 50000 original train images; legacy comparison: first 500 per class of test",
+  "feature_extractor": "torch-fidelity inception-v3-compat 2048, FP32",
+  "path_note": "Original server paths reduced to basenames; numerical settings and checkpoint hash unchanged."
+}

@@ -1,5 +1,20 @@
 # Reversible ODE Generation and Classification
 
+## New Backbone Branch: TorchCFM U-Net (CIFAR-10)
+
+This branch adds a separate **35.75M-parameter U-Net** study in `strong_rf/`.
+Start with [the reproduction guide](strong_rf/README.md) and
+[the measured results and generated grids](results/strong-rf/RESULTS.md).
+The five evaluated methods are Label-conditioned, low-frequency Gaussian-only,
+Gaussian + OT, Gaussian + reverse CE, and Gaussian + OT + reverse CE.
+All five use the new backbone; **none uses a posterior head or history adapter**.
+The newly proposed state-vs-history adapter experiment is not implemented here.
+
+The instructions and older 1M results below refer to the **previous backbone**,
+not to the new study. Checkpoints and metric protocols are not interchangeable.
+
+---
+
 This repository contains the reproducible CIFAR-10 experiment for a single
 reversible ODE that generates images from class-conditioned low-frequency
 Gaussian noise and classifies images by integrating the same flow backwards.

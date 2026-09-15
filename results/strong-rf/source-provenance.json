@@ -1,0 +1,16 @@
+{
+  "exported_utc": "2026-09-15T13:13:00.553788+00:00",
+  "source_runs": [
+    "cifar10-five-gpu-500k-20260913",
+    "cifar10-label-gaussian-1m-20260914"
+  ],
+  "original_source_sha256": {
+    "strong_rf/train.py": "28070e72cd212463d9b530308fcf61cb961d0d562ef3e5af46500c354e7547a8",
+    "strong_rf/common.py": "b2b57e54ada2cab4bc42a28ac6895a7414f2822443b2b486dc390bee235b2dc9",
+    "strong_rf/evaluate.py": "314792b6ea792564be7c7dcb8e52eb5f35205037b66c2f7889dafe84ac0b862d",
+    "unified_transport/latent.py": "0d529a78b6977cc26822f1baa1a96988c370af6d24a08d971557853b35b68c99",
+    "unified_transport/ot_pairing.py": "781c930d0c91c1922cd7cd7e7b21fb73d3ad8a24e0ea55eb6d94df294358c14a",
+    "unified_transport/reference_classifier.py": "d7acb7a8d257579e6092541e7af54898eed50df95e768a46f297481d609ab7a7"
+  },
+  "note": "Source hashes before publication-only CLI/documentation additions. Metrics are not recomputed."
+}

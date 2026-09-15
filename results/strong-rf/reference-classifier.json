@@ -1,0 +1,7 @@
+{
+  "sha256": "cf98ff68b904a1720e4fa7eb084680a7c714c2b6ec50b0b70753443c26e76fcb",
+  "architecture": "CIFAR10ReferenceClassifier, small_resnet",
+  "epoch": 44,
+  "test_accuracy": 0.9236,
+  "role": "generated image scoring only; never ODE guidance"
+}

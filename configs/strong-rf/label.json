@@ -1,0 +1,51 @@
+{
+  "output": "runs/strong-rf/label",
+  "kind": "label",
+  "data_root": "./data",
+  "steps": 500000,
+  "batch_size": 128,
+  "sigma": 1.0,
+  "center_scale": 12.0,
+  "lr": 0.0002,
+  "warmup": 5000,
+  "ema_decay": 0.9999,
+  "amp": "none",
+  "ce_weight": 0.001,
+  "ce_every": 4,
+  "ce_steps": 4,
+  "ce_batch": 16,
+  "ce_logits": "posterior",
+  "seed": 0,
+  "save_every": 25000,
+  "snapshot_every": 25000,
+  "keep_previous_checkpoint": true,
+  "preview_every": 25000,
+  "resume": false,
+  "architecture": {
+    "dim": [
+      3,
+      32,
+      32
+    ],
+    "num_channels": 128,
+    "num_res_blocks": 2,
+    "channel_mult": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "num_heads": 4,
+    "num_head_channels": 64,
+    "attention_resolutions": "16",
+    "dropout": 0.1
+  },
+  "objective": "linear_flow_matching",
+  "pairing": "independent",
+  "data_augmentation": "horizontal_flip_only",
+  "ot_epsilon": 0.005,
+  "ot_iterations": 10,
+  "reverse_ce_solver": "euler",
+  "reverse_ce_dropout": false,
+  "source_commit": "7c653857de4c25b979a740ef8b6a5d5ddb09b6c1"
+}
