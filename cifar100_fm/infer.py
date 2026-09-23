@@ -37,8 +37,13 @@ def main():
         labels = torch.arange(100, device=args.device).repeat_interleave(args.per_class)
         generator = torch.Generator(device=args.device).manual_seed(args.seed)
         noise = initial_noise(labels, config, prior, generator)
-        generated = torch.cat([to_uint8(integrate(model,z,None,args.method,args.steps)[0]).cpu()
-                               for z in noise.split(args.batch_size)])
+        chunks=[]
+        for z in noise.split(args.batch_size):
+            result,_=integrate(model,z,None,args.method,args.steps)
+            if not bool(result.isfinite().all()):
+                raise RuntimeError('nonfinite generated states')
+            chunks.append(to_uint8(result).cpu())
+        generated = torch.cat(chunks)
         for first in range(0,100,10):
             save_image(generated[first*args.per_class:(first+10)*args.per_class].float()/255,
                        out/f'classes-{first:02d}-{first+9:02d}.png', nrow=args.per_class)
@@ -52,6 +57,8 @@ def main():
             x = torch.from_numpy(dataset.data[start:min(start+args.batch_size,count)])
             x = x.permute(0,3,1,2).to(args.device).float()/127.5-1
             encoded,_ = integrate(model,x,None,args.method,args.steps,reverse=True)
+            if not bool(encoded.isfinite().all()):
+                raise RuntimeError('nonfinite reverse states')
             predictions.extend(prior.classify(encoded).cpu().tolist())
             print(f'classified {len(predictions)}/{count}',flush=True)
         truth = np.asarray(dataset.targets[:count])

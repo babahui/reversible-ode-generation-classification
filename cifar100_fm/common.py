@@ -42,14 +42,14 @@ def sha256(path):
 
 def build_model(kind="gaussian", use_checkpoint=False):
     # Reuse the exact vendored backbone from the historical CIFAR-100 snapshot.
-    if kind != "gaussian":
-        raise ValueError("this package implements CIFAR-100 pure Gaussian FM only")
+    if kind not in {"gaussian", "gaussian_dual_pad4_js"}:
+        raise ValueError("unsupported CIFAR-100 objective")
     return UNetModelWrapper(**ARCH, class_cond=False, use_checkpoint=use_checkpoint)
 
 
 def build_prior(config, device):
     if config.get('dataset') == 'cifar100':
-        if config.get('kind') != 'gaussian' or config.get('num_classes') != 100:
+        if config.get('kind') not in {'gaussian', 'gaussian_dual_pad4_js'} or config.get('num_classes') != 100:
             raise ValueError('CIFAR-100 experiment requires Gaussian-only, 100 fine classes')
         if config.get('prior_version') != 'rgb_dct6_energy_sorted_100_v1':
             raise ValueError('unknown CIFAR-100 codebook')

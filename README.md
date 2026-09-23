@@ -1,15 +1,20 @@
 # Reversible ODE Generation and Classification
 
-## CIFAR-100 DCT Gaussian Pure-FM Baseline
+## CIFAR-100: Pure FM vs Dual-Pad4 CE + JS (5000K)
 
 The `experiment/cifar100-dct-gaussian-fm` branch adds an isolated CIFAR-100
-reproduction in [`cifar100_fm/`](cifar100_fm/README.md): training from scratch,
+comparison in [`cifar100_fm/`](cifar100_fm/README.md): training from scratch,
 label-free forward/reverse ODE inference, restartable full evaluation, and
 [verified 50K-400K results](cifar100_fm/results/README.md).
-It uses the TorchCFM U-Net below, **without CE, OT, history, or a classifier head**.
+Both use the same DCT Gaussian and TorchCFM U-Net, **without OT, history, or a
+classifier head**. The new method adds two pad4 views and reverse-ODE CE + JS
+only during training; inference stays label-free. Both target 5,000,000 total
+steps. The CIFAR-10-matched protocol shares a from-scratch pure-FM 1M prefix,
+then compares continued pure FM against CE + JS through total 5M.
 See the separate [Chinese training prompt](cifar100_fm/TRAINING_PROMPT_ZH.md).
-The historical run reached 450K; 450K evaluation and 500K training are not claimed
-as completed. Commands elsewhere in this repository concern other experiments.
+The historical pure-FM run reached 450K; complete metrics reach 400K.
+The new CE + JS method has local execution checks, **not completed long-run
+results**. Commands elsewhere in this repository concern other experiments.
 
 ## New Backbone Branch: TorchCFM U-Net (CIFAR-10)
 

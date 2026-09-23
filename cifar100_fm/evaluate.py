@@ -179,7 +179,10 @@ def main():
             if len(chosen):
                 save_image(torch.from_numpy(images[chosen]).float()/255,out/f'classes-{first:02d}-{first+9:02d}.png',nrow=10)
     write_json(out/'metrics.json',metrics)
-    print(json.dumps(metrics,indent=2),flush=True)
+    summary={key:metrics[key] for key in ['checkpoint_step','kind','generated_images',
+        'fid_train_50k_reference','fid_test_10k_reference','inception_score_mean',
+        'reverse_accuracy','reverse_images'] if key in metrics}
+    print(json.dumps(dict(summary,metrics_file=str(out/'metrics.json')),indent=2),flush=True)
 
 
 if __name__=='__main__':
