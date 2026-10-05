@@ -1,0 +1,38 @@
+{
+  "common.py": {
+    "original_sha256": "b2b57e54ada2cab4bc42a28ac6895a7414f2822443b2b486dc390bee235b2dc9",
+    "original_file": "strong_rf/common.py"
+  },
+  "train.py": {
+    "original_sha256": "3d2055ee0e6403bfc698c0a23b1d508f2be3ca20487e117f3660e021df6957dd",
+    "original_file": "strong_rf/train.py"
+  },
+  "evaluate.py": {
+    "original_sha256": "314792b6ea792564be7c7dcb8e52eb5f35205037b66c2f7889dafe84ac0b862d",
+    "original_file": "strong_rf/evaluate.py"
+  },
+  "diagnose_ce_solvers.py": {
+    "original_sha256": "974e07fe51b3729c5509289a8f7863f32df913c2f146c708f47cf947f37cfe98",
+    "original_file": "strong_rf/diagnose_ce_solvers.py"
+  },
+  "evaluate_reverse_test.py": {
+    "original_sha256": "bbc6698b5de5387a521da8e67b8d01e832645046c012c99c18aae902c78458d6",
+    "original_file": "strong_rf/evaluate_reverse_test.py"
+  },
+  "trajectory_augmentation.py": {
+    "original_sha256": "9b08dd99932c525fca7556c2ce64eda177b8dfd1301a8132a243be11ae8d85ad",
+    "original_file": "strong_rf/trajectory_augmentation.py"
+  },
+  "latent.py": {
+    "original_sha256": "0d529a78b6977cc26822f1baa1a96988c370af6d24a08d971557853b35b68c99",
+    "original_file": "unified_transport/latent.py"
+  },
+  "ot_pairing.py": {
+    "original_sha256": "781c930d0c91c1922cd7cd7e7b21fb73d3ad8a24e0ea55eb6d94df294358c14a",
+    "original_file": "unified_transport/ot_pairing.py"
+  },
+  "reference_classifier.py": {
+    "original_sha256": "d7acb7a8d257579e6092541e7af54898eed50df95e768a46f297481d609ab7a7",
+    "original_file": "unified_transport/reference_classifier.py"
+  }
+}

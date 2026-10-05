@@ -1,0 +1,30 @@
+{
+  "repository": "babahui/reversible-ode-generation-classification",
+  "tag": "cifar10-ce1-50k-v1",
+  "assets": {
+    "cifar10-ce1-1050000-ema.pt": {
+      "bytes": 143110435,
+      "sha256": "3a581cb252995b889f7a74f07764394b6756d710439a68b0920831b03a2f8e70",
+      "description": "EMA inference: CE1 +50K, Euler1 test accuracy 92.72%",
+      "url": "https://github.com/babahui/reversible-ode-generation-classification/releases/download/cifar10-ce1-50k-v1/cifar10-ce1-1050000-ema.pt"
+    },
+    "cifar10-ce1-1050000-full.pt": {
+      "bytes": 572470061,
+      "sha256": "4c28710a9c46d042e8df0117b415d6488087a84675a6b3f7f413e0e8053e42d3",
+      "description": "Complete CE1 +50K state: model, EMA, Adam and RNG",
+      "url": "https://github.com/babahui/reversible-ode-generation-classification/releases/download/cifar10-ce1-50k-v1/cifar10-ce1-1050000-full.pt"
+    },
+    "cifar10-fm-1000000-full.pt": {
+      "bytes": 572467939,
+      "sha256": "feed2069bb5e18d5ba3cccb60e770531d059f3642591dec4702b6181261ffc5e",
+      "description": "Original pure-FM 1M complete initialization",
+      "url": "https://github.com/babahui/reversible-ode-generation-classification/releases/download/cifar10-ce1-50k-v1/cifar10-fm-1000000-full.pt"
+    },
+    "cifar10-reference-classifier.pt": {
+      "bytes": 11288939,
+      "sha256": "cf98ff68b904a1720e4fa7eb084680a7c714c2b6ec50b0b70753443c26e76fcb",
+      "description": "Independent generated-image scorer; not needed for model inference",
+      "url": "https://github.com/babahui/reversible-ode-generation-classification/releases/download/cifar10-ce1-50k-v1/cifar10-reference-classifier.pt"
+    }
+  }
+}

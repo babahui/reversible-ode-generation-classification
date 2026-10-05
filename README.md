@@ -1,5 +1,14 @@
 # Reversible ODE Generation and Classification
 
+## CIFAR-10 CE1 release
+
+The new **one-step reverse CE + paired-view JS** experiment is documented in
+[cifar10_ce1/README.md](cifar10_ce1/README.md): training from pure FM 1M,
+resuming through +500K, Euler1 classification, Heun60 generation, and pretrained
+weight downloads with SHA256 checksums. The completed +50K model achieves
+**92.72% Euler1 test accuracy and FID50K 4.8161**. It does not use OT or history.
+The older experiment described below uses a different configuration and weights.
+
 This repository contains the reproducible CIFAR-10 experiment for a single
 reversible ODE that generates images from class-conditioned low-frequency
 Gaussian noise and classifies images by integrating the same flow backwards.
