@@ -46,8 +46,7 @@ python -m cifar10_ce1.prepare_data --data-root ./data
 
 ## 预训练权重
 
-发布目标：[GitHub Release: cifar10-ce1-50k-v1](https://github.com/babahui/reversible-ode-generation-classification/releases/tag/cifar10-ce1-50k-v1)。
-发布是否已上线以该页面为准；本地准备阶段不会自动使下载地址生效。
+下载页面：[GitHub Release: cifar10-ce1-50k-v1](https://github.com/babahui/reversible-ode-generation-classification/releases/tag/cifar10-ce1-50k-v1)。
 
 | 文件 | 用途 | 下载 |
 |---|---|---|
@@ -56,7 +55,7 @@ python -m cifar10_ce1.prepare_data --data-root ./data
 | `cifar10-fm-1000000-full.pt` | 公共纯FM 1M完整初始化，约572MB | [FM初始化](https://github.com/babahui/reversible-ode-generation-classification/releases/download/cifar10-ce1-50k-v1/cifar10-fm-1000000-full.pt) |
 | `cifar10-reference-classifier.pt` | 独立生成类别评分器；分类/生成推理不需要它 | [评分器](https://github.com/babahui/reversible-ode-generation-classification/releases/download/cifar10-ce1-50k-v1/cifar10-reference-classifier.pt) |
 
-[weights.json](weights.json) 记录文件大小、用途和SHA256。发布上线后可自动下载并校验：
+[weights.json](weights.json) 记录文件大小、用途和SHA256。可自动下载并校验：
 
 ```bash
 # 只下载EMA推理权重
