@@ -20,3 +20,12 @@ __pycache__/
 # Keep the repository focused on source and reproducibility metadata.
 !results/*.json
 !configs/*.json
+
+# Full ImageNet RAE release: external source, data and local environment.
+/third_party/
+/pretrained_models/
+/weights/
+/.venv-rae/
+*.npy
+*.npz
+*.safetensors

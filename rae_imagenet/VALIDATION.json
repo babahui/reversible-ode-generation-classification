@@ -1,0 +1,39 @@
+{
+  "scope": "Portable ImageNet-1k label-conditioned velocity FM implementation; no full ImageNet training run",
+  "unit_tests": {
+    "passed": 11,
+    "cpu_gloo_ranks": 2,
+    "coverage": [
+      "dataset class mapping and flip",
+      "deterministic resumption and DDP sharding",
+      "CFG and forward Euler",
+      "1000-class null label",
+      "noise independence from sampling batch",
+      "learning-rate and resume signature",
+      "full optimizer/EMA/RNG next-update reproduction",
+      "checkpointed DDT forward and gradient equivalence",
+      "large model parameter count",
+      "partial evaluation recovery and protocol checking"
+    ]
+  },
+  "parameters": {
+    "total": 869589396,
+    "trainable": 869589140,
+    "measurement": "meta-device instantiation of pinned upstream code"
+  },
+  "real_rae_reconstruction": {
+    "device": "CPU",
+    "dataset": "Imagenette validation subset, not full ImageNet",
+    "count": 2,
+    "mean_psnr": 20.02136516571045,
+    "latent_shape": [
+      1024,
+      16,
+      16
+    ]
+  },
+  "full_imagenet_gpu_training_tested": false,
+  "multi_gpu_nccl_training_tested": false,
+  "rae_commit": "8a0d238f8dc3b261aba98b217f6c79c0182e8e94",
+  "dinov3_commit": "94a96ac83c2446f15f9bdcfae23cad3c6a9d4988"
+}
